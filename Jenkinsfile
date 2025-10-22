@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:18' } // Use official Node.js image
+    }
     
     environment {
         IMAGE_NAME = "balaakashreddyy/student-management:latest"
