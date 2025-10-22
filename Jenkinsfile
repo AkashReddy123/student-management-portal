@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: "main", url: "https://github.com/AkashReddy123/student-management-portal.git"
+                git "https://github.com/AkashReddy123/student-management-portal.git"
             }
         }
         
