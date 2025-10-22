@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-const mongoURL = process.env.MONGO_URL || 'mongodb://mongrout:securepass@mongo-service:27017/studentdb?authSource=admin';
+const mongoURL = process.env.MONGO_URL || 'mongodb://mongo-root:securepass@mongo-service:27017/studentdb?authSource=admin';
 
 mongoose.connect(mongoURL, {
   useNewUrlParser: true,
