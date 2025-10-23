@@ -1,45 +1,54 @@
 pipeline {
-    agent {
-        docker { image 'node:18' } // Use official Node.js image
-    }
-    
+    agent any
+
     environment {
-        IMAGE_NAME = "balaakashreddyy/student-management:latest"
-        DOCKER_CRED = "dockerhub-credentials"
+        DOCKERHUB_CREDENTIALS = 'dockerhub'
+        DOCKER_IMAGE = "balaakashreddyy/student-management-portal"
+        KUBECONFIG_CREDENTIALS = 'kubeconfig'
     }
-    
+
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                git "https://github.com/AkashReddy123/student-management-portal.git"
+                git branch: 'main', url: 'https://github.com/AkashReddy123/student-management-portal.git'
             }
         }
-        
-        stage('Install Dependencies') {
-            steps {
-                sh "npm install"
-            }
-        }
-        
+
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME} ."
-            }
-        }
-        
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: "${DOCKER_CRED}", usernameVariable: "DOCKER_USER", passwordVariable: "DOCKER_PASS")]) {
-                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                    sh "docker push ${IMAGE_NAME}"
+                script {
+                    sh 'docker build -t $DOCKER_IMAGE:$BUILD_NUMBER .'
                 }
             }
         }
-        
+
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    sh 'docker push $DOCKER_IMAGE:$BUILD_NUMBER'
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
-                sh "kubectl apply -f k8s/mongo-deployment.yaml"
-                sh "kubectl apply -f k8s/student-app-deployment.yaml"
+                script {
+                    withCredentials([file(credentialsId: KUBECONFIG_CREDENTIALS, variable: 'KUBECONFIG')]) {
+                        sh '''
+                        kubectl set image deployment/student-app student-app=$DOCKER_IMAGE:$BUILD_NUMBER -n student-app
+                        '''
+                    }
+                }
             }
         }
     }
