@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials' // Jenkins credentials ID for Docker Hub
+        DOCKER_HUB_CREDENTIALS = 'dockerhub-credentials' // Jenkins credentials ID for Docker Hub
         GITHUB_CREDENTIALS = 'github-pat'                // Jenkins credentials ID for GitHub PAT
         IMAGE_NAME = 'akashreddy/student-management-portal' // Docker image name
-        KUBE_CONFIG_CREDENTIALS = 'kube-config'          // Jenkins credentials ID for kubeconfig
+        KUBE_CONFIG_CREDENTIALS = 'kubeconfig'          // Jenkins credentials ID for kubeconfig
         K8S_NAMESPACE = 'default'                        // Kubernetes namespace
     }
 
