@@ -3,15 +3,19 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = 'dockerhub-credentials'
-        IMAGE_NAME = 'balaakashreddyy/student-management-portal' // Docker image name
+        IMAGE_NAME = 'balaakashreddyy/student-management-portal'
         KUBE_CONFIG_CREDENTIALS = 'kubeconfig'
         K8S_NAMESPACE = 'default'
+    }
+
+    options {
+        skipDefaultCheckout() // Important: prevents automatic git checkout
     }
 
     stages {
         stage('Use Existing Workspace') {
             steps {
-                echo "Using existing code in workspace, no git fetch needed"
+                echo "Using existing workspace without Git checkout"
                 sh 'ls -la'
             }
         }
