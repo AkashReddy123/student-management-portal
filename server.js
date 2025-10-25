@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public')); // ADD THIS LINE - Serve static files from public folder
 
 // MongoDB connection
 const mongoURL = process.env.MONGO_URL || 'mongodb://mongo-root:securepass@mongo-service:27017/studentdb?authSource=admin';
